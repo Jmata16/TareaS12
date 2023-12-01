@@ -1,0 +1,95 @@
+﻿@model IEnumerable<TareaS12.Entidades.PrincipalEnt>
+
+@{
+    ViewBag.Title = "ConsultarPrincipalENAbono";
+}
+
+<h2>Consultar Principal y Saldo</h2>
+
+<div class="row">
+    <div class="col-md-6">
+        @Html.DropDownListFor(model => model.First().Id_Compra, new SelectList(Model, "Id_Compra", "Descripcion"), "Seleccione un producto", new { @class = "form-control", id = "ddlProductos" })
+    </div>
+    <div class="col-md-3">
+        <button type="button" onclick="ConsultarSaldo()" class="btn btn-primary">Consultar Saldo</button>
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-3">
+        <label for="saldo" class="mb-2">Saldo:</label>
+        <span id="saldoValue" class="form-control mb-2 text-muted">Saldo...</span>
+
+        <input type="hidden" id="idCompraValue" />
+    </div>
+</div>
+
+<div class="row mt-3">
+    <div class="col-md-6">
+        <label for="monto">Monto:</label>
+        <input type="text" class="form-control" id="monto" placeholder="Ingrese el monto">
+    </div>
+    <div class="col-md-3">
+        <button type="button" onclick="RegistrarAbono()" class="btn btn-success">Abonar</button>
+    </div>
+</div>
+
+<script>
+    function ConsultarSaldo() {
+        var selectedProductId = $("#ddlProductos").val();
+
+        if (selectedProductId !== "") {
+            $.ajax({
+                url: '/Abono/ObtenerSaldo',
+                type: 'GET',
+                data: { idCompra: selectedProductId },
+                success: function (data) {
+                    $("#saldoValue").text(data);
+                    
+                    $("#idCompraValue").val(selectedProductId);
+                },
+                error: function () {
+                    alert('Error al consultar el saldo.');
+                }
+            });
+        } else {
+            $("#saldoValue").text("Saldo...");
+            
+            $("#idCompraValue").val("");
+        }
+    }
+
+    function RegistrarAbono() {
+        var selectedProductId = $("#ddlProductos").val();
+        var monto = $("#monto").val();
+        var idCompra = $("#idCompraValue").val();
+
+        if (selectedProductId !== "" && monto !== "" && idCompra !== "") {
+            if (idCompra !== "0") {
+                var saldoActual = parseFloat($("#saldoValue").text());
+
+                if (parseFloat(monto) <= saldoActual) {
+                    $.ajax({
+                        url: '/Abono/RegistrarAbono',
+                        type: 'POST',
+                        data: { idCompra: idCompra, monto: monto },
+                        success: function () {
+                            window.location.href = 'https://localhost:44352/Principal/ConsultarPrincipal';
+                        },
+                        error: function () {
+                            alert('Error al registrar el abono.');
+                        },
+                        complete: function (data) {
+                            console.log(data); // Muestra la respuesta completa en la consola
+                        }
+                    });
+                } else {
+                    alert('El monto ingresado es mayor que el saldo actual.');
+                }
+            }
+        }
+    }
+
+
+
+</script>

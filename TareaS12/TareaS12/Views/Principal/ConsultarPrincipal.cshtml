@@ -1,0 +1,48 @@
+﻿@model IEnumerable<TareaS12.Entidades.PrincipalEnt>
+
+@{
+    ViewBag.Title = "ConsultarPrincipal";
+}
+
+<h2>ConsultarPrincipal</h2>
+
+<table class="table">
+    <tr>
+        <th>
+            <a>Código Compra</a>
+        </th>
+        <th>
+            <a>Descripción</a>
+        </th>
+        <th>
+            <a>Precio</a>
+        </th>
+        <th>
+            <a>Saldo</a>
+        </th>
+        <th>
+            <a>Estado</a>
+        </th>
+    </tr>
+
+@foreach (var item in Model) {
+    <tr>
+        <td>
+            @Html.DisplayFor(modelItem => item.Id_Compra)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Precio)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Saldo)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Descripcion)
+        </td>
+        <td>
+            @Html.DisplayFor(modelItem => item.Estado)
+        </td>
+    </tr>
+}
+
+</table>
